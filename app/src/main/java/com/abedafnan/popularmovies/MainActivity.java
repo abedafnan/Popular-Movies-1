@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private MoviesAdapter mAdapter;
 
-    public static final String API_KEY = "?api_key=60d6077e40444750fdb653f8417c66cb";
+    public static final String API_KEY = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
