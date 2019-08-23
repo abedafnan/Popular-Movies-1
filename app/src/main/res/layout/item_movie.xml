@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/horizontal_margin_short"
         android:layout_gravity="center"
-        android:contentDescription="Movie Poster"
+        android:contentDescription="@string/poster_description"
         android:scaleType="centerCrop" />
 
 </FrameLayout>
