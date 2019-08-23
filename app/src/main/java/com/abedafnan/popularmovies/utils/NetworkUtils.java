@@ -8,6 +8,7 @@ public class NetworkUtils {
 
     public static boolean hasNetworkConnection(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert connectivityManager != null;
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         // Return true if the network is connected and not null

@@ -1,6 +1,5 @@
 package com.abedafnan.popularmovies.adapters;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,9 +16,11 @@ import java.util.List;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
 
     private List<Movie> mMoviesList;
+    private OnItemClickHandler mOnItemClickHandler;
 
-    public MoviesAdapter(List<Movie> movies) {
+    public MoviesAdapter(List<Movie> movies, OnItemClickHandler clickHandler) {
         mMoviesList = movies;
+        mOnItemClickHandler = clickHandler;
     }
 
     @NonNull
@@ -27,7 +28,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     public MoviesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View view = inflater.inflate(R.layout.item_movie, viewGroup, false);
-        return new MoviesViewHolder(view);
+
+        final MoviesViewHolder viewHolder = new MoviesViewHolder(view);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnItemClickHandler.onItemClick(viewHolder.getPosition());
+
+            }
+        });
+
+        return viewHolder;
     }
 
     @Override
@@ -43,11 +54,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         return mMoviesList.size();
     }
 
+    public interface OnItemClickHandler {
+        void onItemClick(int position);
+    }
+
     class MoviesViewHolder extends RecyclerView.ViewHolder {
 
         ImageView posterImageView;
 
-        public MoviesViewHolder(@NonNull View itemView) {
+        MoviesViewHolder(@NonNull View itemView) {
             super(itemView);
 
             posterImageView = itemView.findViewById(R.id.imageView_poster);

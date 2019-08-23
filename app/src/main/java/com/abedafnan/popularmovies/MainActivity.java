@@ -1,12 +1,12 @@
 package com.abedafnan.popularmovies;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,23 +28,32 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnItemClickHandler {
 
-    private RecyclerView mMoviesRecycler;
     private ProgressBar mProgressBar;
     private MoviesAdapter mAdapter;
+    private List<Movie> mMovies;
 
-    public static final String API_KEY = "?api_key=60d6077e40444750fdb653f8417c66cb";
+    private static final String API_KEY = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        // Generate the RecyclerView
+        generateMovieList();
 
         // Load popular movies
         showPopularMovies();
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Movie movie = mMovies.get(position);
+        Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+        intent.putExtra("Movie", movie);
+        startActivity(intent);
     }
 
     private void showPopularMovies() {
@@ -59,9 +68,12 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
                     mProgressBar.setVisibility(View.GONE);
-                    MovieResponse popularMoviesResponse = response.body();
-                    if (popularMoviesResponse != null) {
-                        generateMovieList(popularMoviesResponse.getMovies());
+
+                    MovieResponse moviesResponse = response.body();
+                    if (moviesResponse != null) {
+                        mMovies.clear();
+                        mMovies.addAll(moviesResponse.getMovies());
+                        mAdapter.notifyDataSetChanged();
                     }
                 }
 
@@ -91,9 +103,11 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
                     mProgressBar.setVisibility(View.GONE);
 
-                    MovieResponse popularMoviesResponse = response.body();
-                    if (popularMoviesResponse != null) {
-                        generateMovieList(popularMoviesResponse.getMovies());
+                    MovieResponse moviesResponse = response.body();
+                    if (moviesResponse != null) {
+                        mMovies.clear();
+                        mMovies.addAll(moviesResponse.getMovies());
+                        mAdapter.notifyDataSetChanged();
                     }
                 }
 
@@ -110,15 +124,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void generateMovieList(List<Movie> movies) {
-        mMoviesRecycler = findViewById(R.id.recycler_movies);
+    private void generateMovieList() {
+        mMovies = new ArrayList<>();
+        RecyclerView mMoviesRecycler = findViewById(R.id.recycler_movies);
         mMoviesRecycler.setHasFixedSize(true);
+
         // Set the adapter
-        MoviesAdapter adapter = new MoviesAdapter(movies);
-        mMoviesRecycler.setAdapter(adapter);
+        mAdapter = new MoviesAdapter(mMovies, this);
+        mMoviesRecycler.setAdapter(mAdapter);
+
         // Set the layout manager
         GridLayoutManager layoutManager = new GridLayoutManager(
-                MainActivity.this, 2, GridLayoutManager.VERTICAL, true);
+                MainActivity.this, 2, GridLayoutManager.VERTICAL, false);
         mMoviesRecycler.setLayoutManager(layoutManager);
     }
 
@@ -139,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Display a dialog to sort movies by most popular or top rated
-    public void sort() {
+    private void sort() {
         CharSequence[] sorting = {"Most Popular", "Top Rated"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
