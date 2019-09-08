@@ -1,7 +1,7 @@
 # Popular Movies - 1
 This is project #2 of Android Developer Nanodegree. 
 
-####Features:
+#### Features:
 * Present the user with grid arrangement of movie posters upon launch.
 * Allows the user to change the sort order via a setting
     * The sort order is by most popular or by highest-rated.
@@ -11,7 +11,7 @@ This is project #2 of Android Developer Nanodegree.
     * Users Rating
     * Plot synopsis
 
-####Used:
+#### Used:
 * TheMovieDB API
 * Retrofit
 * Picasso
